@@ -1,0 +1,10 @@
+.git
+.env
+data/*
+*.xlsx
+~$*
+README*.md
+__pycache__
+*.pyc
+code-review-*
+.code-review-*

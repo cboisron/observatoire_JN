@@ -1,0 +1,11 @@
+.env
+
+data/source/*
+!data/source/.gitkeep
+
+data/contributions/*
+!data/contributions/.gitkeep
+
+__pycache__/
+*.pyc
+~$*
