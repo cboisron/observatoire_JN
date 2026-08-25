@@ -3,7 +3,7 @@
 L'application publique fonctionne dans Docker sur la VM Debian `217.182.210.146`. Toutes les commandes ci-dessous sont à exécuter depuis le dépôt :
 
 ```bash
-cd ~/observatoire_JN
+cd /home/debian/observatoire_JN/data/contributions
 ```
 
 ## Vérifier l'application
