@@ -16,7 +16,6 @@ import threading
 import uuid
 import webbrowser
 from collections import defaultdict, deque
-from datetime import datetime
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -41,21 +40,27 @@ LOCK = threading.Lock()
 RATE_LIMIT_LOCK = threading.Lock()
 REQUEST_HISTORY: dict[str, deque[float]] = defaultdict(deque)
 
+FORM_DATA_SOURCE = "Formulaire observatoire"
+
+# Colonnes visibles de la feuille Observatoire, dans le même ordre.
 FIELDS = (
-    ("timestamp", "Timestamp"),
-    ("development_stage", "What is your platform's development stage?"),
-    ("capability", "What would you say is the capability of your Digital Twin? "),
-    ("capability_justification", "Please justify the capability of your Digital Twin if you can."),
-    ("column_4", "Column 4"),
-    ("solution_name", "What is the name of your solution"),
-    ("local_authorities", "For which local authority / authories was your digital twin solution created?"),
-    ("territory_name", "For which city/community/local authority/region etc. ? "),
-    ("local_perimeter", "What is the local perimeter of your digital twin?"),
-    ("consortium", "Are you part of a consortium? "),
-    ("consortium_members", "State the members of your consortium"),
+    ("source_id", "#"),
+    ("development_stage", "Platform's_development_stage"),
+    ("solution_name", "Name_of_solution"),
+    ("country", "Country_location"),
+    ("geographic_scope", "Geographic_Scope_(LDT_user)"),
+    ("territory_classification", "City_Community_Region_Classification"),
+    ("providers", "LDT_provider(s) / Consortium"),
+    ("technologies", "Used_technologies / Characteristics"),
+    ("twin_type", "Type_of_twin"),
+    ("use_case_domains", "Use case domains"),
+    ("user_types", "Types_of_users"),
+    ("funding_sources", "Funding_sources"),
+    ("in_eu_raw", "in EU ?"),
+    ("data_source", "where_data_from"),
 )
 FIELD_KEYS = {key for key, _ in FIELDS}
-USER_FIELDS = FIELD_KEYS - {"timestamp", "column_4"}
+USER_FIELDS = FIELD_KEYS - {"source_id", "data_source"}
 REQUIRED_FIELDS = {"solution_name"}
 
 
@@ -205,8 +210,8 @@ def append_submission(payload: object, path: Path = OUTPUT) -> tuple[str, int]:
         identifier = f"FORM-{next_number:05d}"
         row = {
             **cleaned,
-            "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
-            "column_4": "",
+            "source_id": str(next_number),
+            "data_source": FORM_DATA_SOURCE,
         }
         write_workbook(path, [*rows, row])
     return identifier, len(rows) + 1

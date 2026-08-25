@@ -1,45 +1,71 @@
-# Maintenance technique
+# Maintenance technique sur la VM
 
-Pour l'installation sur une VM, voir `DEPLOIEMENT_DOCKER.md`.
+L'application publique fonctionne dans Docker sur la VM Debian `217.182.210.146`. Toutes les commandes ci-dessous sont à exécuter depuis le dépôt :
 
-## Démarrer et actualiser
+```bash
+cd ~/observatoire_JN
+```
 
-Double-cliquer sur `ouvrir_dashboard.bat`.
+## Vérifier l'application
 
-À chaque lancement, le script `scripts/extract_dashboard_data.py` relit `benchmark_from_mapping_pdf.xlsx`, recalcule les indicateurs et remplace `app/data/dashboard-data.js`.
+```bash
+docker compose ps
+docker compose logs --tail=50 observatoire
+curl http://127.0.0.1:8088/api/health
+```
 
-## Ajouter des données à l'observatoire
+L'adresse publique actuelle est `http://217.182.210.146:8088`. Si `APP_PORT` change dans `.env`, adapter l'URL et le pare-feu.
 
-1. Fermer le dashboard et ouvrir `benchmark_from_mapping_pdf.xlsx`.
-2. Ajouter les observations dans la feuille `Observatoire`, sans renommer les colonnes ni les feuilles.
-3. Enregistrer et fermer Excel.
-4. Relancer `ouvrir_dashboard.bat`.
+## Mettre à jour le code
 
-Les nouvelles lignes, valeurs et entrées ajoutées aux feuilles de référentiels sont lues automatiquement. Pour ajouter un choix au formulaire, modifier la liste ou la validation correspondante dans le classeur.
+```bash
+git pull
+docker compose up -d --build
+```
 
-## Traiter les réponses du formulaire
+Le conteneur redémarre automatiquement après un redémarrage de la VM. Pour un redémarrage manuel :
 
-Le formulaire ajoute les réponses dans `saisies_jumeaux_numeriques.xlsx`. Ce fichier est séparé de la source et n'alimente pas directement les statistiques.
+```bash
+docker compose restart observatoire
+```
 
-Pour publier une contribution :
+## Remplacer les données sources
 
-1. contrôler et valider sa ligne dans `saisies_jumeaux_numeriques.xlsx` ;
-2. reporter les valeurs compatibles dans une nouvelle ligne de la feuille `Observatoire` ;
-3. compléter les champs nécessaires, notamment la provenance ;
-4. relancer `ouvrir_dashboard.bat`.
+Déposer le nouveau classeur sur la VM, puis le remplacer sans changer son nom :
 
-Cette étape reste manuelle car les 9 questions du formulaire ne correspondent pas directement aux 32 colonnes de `Observatoire`.
+```bash
+cp /chemin/nouveau_fichier.xlsx data/source/benchmark_from_mapping_pdf.xlsx.tmp
+mv data/source/benchmark_from_mapping_pdf.xlsx.tmp data/source/benchmark_from_mapping_pdf.xlsx
+docker compose restart observatoire
+docker compose logs --tail=50 observatoire
+```
 
-## Fichiers principaux
+Au démarrage, tous les indicateurs sont recalculés depuis ce fichier. Ne pas renommer la feuille `Observatoire` ni ses colonnes.
 
-| Besoin | Fichier |
-|---|---|
-| Données sources | `benchmark_from_mapping_pdf.xlsx` |
-| Import et calculs | `scripts/extract_dashboard_data.py` |
-| Pages et indicateurs | `app/js/dashboard-pages.js` |
-| Formulaire | `app/js/submission-form.js` |
-| Traductions | `app/js/i18n.js` |
-| Mise en page | `app/assets/styles.css` |
-| Serveur et fichier de réponses | `scripts/serve_dashboard.py` |
+## Récupérer et traiter les contributions
 
-Ne jamais modifier manuellement les fichiers du dossier `app/data` : ils sont générés automatiquement.
+Les réponses sont conservées sur la VM, hors de l'image Docker :
+
+```text
+data/contributions/saisies_jumeaux_numeriques.xlsx
+```
+
+Depuis un autre poste, le fichier peut être récupéré par SSH :
+
+```bash
+scp debian@217.182.210.146:~/observatoire_JN/data/contributions/saisies_jumeaux_numeriques.xlsx .
+```
+
+Après validation métier, reporter ses 14 colonnes dans les colonnes de même nom du classeur source, puis remplacer la source et redémarrer le conteneur. Le formulaire renseigne automatiquement `#` et `where_data_from`.
+
+## Sauvegarde minimale
+
+Sauvegarder régulièrement ces éléments avant un remplacement :
+
+```text
+.env
+data/source/benchmark_from_mapping_pdf.xlsx
+data/contributions/saisies_jumeaux_numeriques.xlsx
+```
+
+Ne pas modifier `app/data/dashboard-data.js` : il est généré automatiquement au démarrage. Le guide de première installation reste disponible dans `DEPLOIEMENT_DOCKER.md`.

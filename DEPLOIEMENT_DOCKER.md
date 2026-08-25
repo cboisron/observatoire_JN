@@ -48,6 +48,8 @@ git pull
 docker compose up -d --build
 ```
 
+Si un fichier de contributions a été créé avec l'ancienne version à 11 colonnes, le conserver sous un autre nom avant le premier démarrage de cette version. Le nouveau formulaire utilise les 14 colonnes visibles de `Observatoire` et refuse d'écraser un ancien schéma incompatible.
+
 ## 4. Remplacer les données sources
 
 ```bash

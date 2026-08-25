@@ -10,32 +10,35 @@
 
   const FORM_SECTIONS = [
     {
-      key: "identity",
+      key: "project",
       fields: [
         { name: "solution_name", type: "text", required: true },
-        { name: "development_stage", type: "single", list: "development_stages" }
-      ]
-    },
-    {
-      key: "capability",
-      fields: [
-        { name: "capability", type: "single", list: "maturity_levels" },
-        { name: "capability_justification", type: "textarea" }
+        { name: "development_stage", type: "single", list: "development_stages" },
+        { name: "twin_type", type: "single", list: "twin_types" }
       ]
     },
     {
       key: "territory",
       fields: [
-        { name: "local_authorities", type: "textarea" },
-        { name: "territory_name", type: "text" },
-        { name: "local_perimeter", type: "single", list: "territory_classifications" }
+        { name: "country", type: "single", list: "countries" },
+        { name: "geographic_scope", type: "text" },
+        { name: "territory_classification", type: "single", list: "territory_classifications" },
+        { name: "in_eu_raw", type: "single", list: "in_eu" }
       ]
     },
     {
-      key: "consortium",
+      key: "ecosystem",
       fields: [
-        { name: "consortium", type: "single", list: "in_eu" },
-        { name: "consortium_members", type: "multiple", list: "providers" }
+        { name: "providers", type: "multiple", list: "providers" },
+        { name: "technologies", type: "multiple", list: "technologies" },
+        { name: "user_types", type: "multiple", list: "user_types" }
+      ]
+    },
+    {
+      key: "uses",
+      fields: [
+        { name: "use_case_domains", type: "multiple", list: "use_case_domains" },
+        { name: "funding_sources", type: "multiple", list: "funding_sources" }
       ]
     }
   ];
@@ -43,13 +46,16 @@
   const FIELD_TRANSLATIONS = {
     solution_name: "field.formSolutionName",
     development_stage: "field.formDevelopmentStage",
-    capability: "field.formCapability",
-    capability_justification: "field.formCapabilityJustification",
-    local_authorities: "field.formLocalAuthorities",
-    territory_name: "field.formTerritoryName",
-    local_perimeter: "field.formLocalPerimeter",
-    consortium: "field.formConsortium",
-    consortium_members: "field.formConsortiumMembers"
+    twin_type: "field.formTwinType",
+    country: "field.formCountry",
+    geographic_scope: "field.formGeographicScope",
+    territory_classification: "field.formTerritoryClassification",
+    in_eu_raw: "field.formInEu",
+    providers: "field.formProviders",
+    technologies: "field.formTechnologies",
+    user_types: "field.formUserTypes",
+    use_case_domains: "field.formUseCaseDomains",
+    funding_sources: "field.formFundingSources"
   };
 
   function allFields() {
@@ -58,6 +64,13 @@
 
   function fieldLabel(fieldName) {
     return T(FIELD_TRANSLATIONS[fieldName] || fieldName);
+  }
+
+  function serializeMultiple(values) {
+    return values.map((value) => {
+      const escaped = value.replaceAll('"', '""');
+      return /[",\n]/.test(value) ? `"${escaped}"` : escaped;
+    }).join(", ");
   }
 
   function formControl(field, draft) {
@@ -181,7 +194,7 @@
     const payload = {};
     allFields().forEach((field) => {
       payload[field.name] = field.type === "multiple"
-        ? formData.getAll(field.name).join(", ")
+        ? serializeMultiple(formData.getAll(field.name))
         : formData.get(field.name) || "";
     });
 

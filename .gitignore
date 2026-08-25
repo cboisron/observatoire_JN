@@ -1,4 +1,5 @@
 .env
+.env.example
 
 data/source/*
 !data/source/.gitkeep

@@ -28,13 +28,13 @@ Les vues disponibles sont :
 
 ### Formulaire de contribution
 
-L'onglet **Proposer un jumeau** reprend la feuille dédiée `Form Responses 3`, et non les 32 colonnes techniques de `Observatoire`. Le formulaire contient donc neuf questions visibles. `Timestamp` est alimenté automatiquement et la colonne technique vide `Column 4` n'est pas demandée à l'utilisateur.
+L'onglet **Proposer un jumeau** reprend uniquement les 14 colonnes visibles de la feuille `Observatoire`. Le formulaire contient 12 questions organisées en quatre étapes : projet, territoire, écosystème, puis usages et financement. Les colonnes `#` et `where_data_from` ne sont pas demandées à l'utilisateur.
 
-Le nom de la solution est obligatoire. Le stade de développement, la capacité et le périmètre utilisent les listes correspondantes du classeur. Les membres du consortium constituent le seul choix multiple du formulaire et reprennent le référentiel `LDT providers`.
+Le nom de la solution est obligatoire. Les listes et choix multiples reprennent les validations et référentiels du classeur source. `#` est incrémenté automatiquement et `where_data_from` reçoit la valeur `Formulaire observatoire`.
 
-Chaque validation ajoute une ligne au fichier `saisies_jumeaux_numeriques.xlsx`, créé à la racine du projet lors de la première contribution. Ce nouveau fichier conserve exactement les 11 en-têtes de `Form Responses 3`. Les lignes sont ajoutées de manière incrémentale et aucune colonne supplémentaire n'est créée. Le fichier source `benchmark_from_mapping_pdf.xlsx` n'est jamais modifié.
+Chaque validation ajoute une ligne au fichier `saisies_jumeaux_numeriques.xlsx`, créé lors de la première contribution. Ce fichier conserve exactement les 14 en-têtes visibles de `Observatoire`, dans le même ordre. Les lignes sont ajoutées de manière incrémentale et le fichier source `benchmark_from_mapping_pdf.xlsx` n'est jamais modifié.
 
-Le fichier de contributions est distinct des données affichées par le dashboard : une saisie n'entre donc pas automatiquement dans les statistiques existantes. Cette séparation permet une validation métier avant tout futur import dans l'observatoire.
+Le fichier de contributions est distinct des données affichées par le dashboard : une saisie n'entre donc pas automatiquement dans les statistiques existantes. Après validation métier, ses colonnes peuvent être reportées directement dans les colonnes de même nom de `Observatoire` ; les colonnes masquées restent vides.
 
 ### Organisation du code
 

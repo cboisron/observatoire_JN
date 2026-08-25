@@ -203,7 +203,7 @@
       "form.error": "<strong>Échec de l'enregistrement.</strong> Vérifiez les champs puis assurez-vous que le fichier Excel n'est pas ouvert dans une autre application.",
       "form.rateLimited": "<strong>Trop d'envois rapprochés.</strong> Attendez quelques minutes avant de réessayer.",
       "form.required": "Champ obligatoire",
-      "form.requiredHelp": "* Le nom de la solution est obligatoire. L'horodatage est ajouté automatiquement.",
+      "form.requiredHelp": "* Le nom de la solution est obligatoire. Le numéro et la provenance « Formulaire observatoire » sont ajoutés automatiquement.",
       "form.choose": "Sélectionner…",
       "form.yes": "Oui",
       "form.no": "Non",
@@ -214,14 +214,14 @@
       "form.selectedOne": "{count} choix sélectionné",
       "form.selectedMany": "{count} choix sélectionnés",
       "form.filterChoices": "Filtrer les choix…",
-      "form.section.identity": "Identification",
-      "form.section.identityHelp": "Informations principales permettant d'identifier le projet et son avancement.",
-      "form.section.capability": "Capacité du jumeau numérique",
-      "form.section.capabilityHelp": "Niveau déclaré et justification libre, conformément au questionnaire source.",
-      "form.section.territory": "Collectivités et territoire",
-      "form.section.territoryHelp": "Collectivités bénéficiaires, territoire concerné et périmètre local.",
-      "form.section.consortium": "Consortium",
-      "form.section.consortiumHelp": "Indiquez si le projet repose sur un consortium et sélectionnez ses membres.",
+      "form.section.project": "1. Le projet",
+      "form.section.projectHelp": "Identifiez d'abord la solution, son avancement et le type de jumeau.",
+      "form.section.territory": "2. Le territoire",
+      "form.section.territoryHelp": "Localisez ensuite la solution et précisez l'échelle du territoire.",
+      "form.section.ecosystem": "3. Écosystème technique et acteurs",
+      "form.section.ecosystemHelp": "Indiquez les organisations, technologies et publics concernés.",
+      "form.section.uses": "4. Usages et financement",
+      "form.section.usesHelp": "Terminez par les domaines d'usage et les modes de financement.",
       "detail.kicker": "Fiche solution",
       "detail.unnamed": "Solution non nommée",
       "detail.noLocation": "Localisation non renseignée",
@@ -266,13 +266,16 @@
       ,"field.dataSource": "Provenance des données"
       ,"field.formSolutionName": "Quel est le nom de votre solution ?"
       ,"field.formDevelopmentStage": "Quel est le stade de développement de votre plateforme ?"
-      ,"field.formCapability": "Quelle est la capacité de votre jumeau numérique ?"
-      ,"field.formCapabilityJustification": "Justifiez cette capacité si vous le pouvez"
-      ,"field.formLocalAuthorities": "Pour quelle(s) collectivité(s) votre solution a-t-elle été créée ?"
-      ,"field.formTerritoryName": "Pour quelle ville, communauté, collectivité ou région ?"
-      ,"field.formLocalPerimeter": "Quel est le périmètre local de votre jumeau numérique ?"
-      ,"field.formConsortium": "Faites-vous partie d'un consortium ?"
-      ,"field.formConsortiumMembers": "Membres du consortium"
+      ,"field.formTwinType": "Quel est le type de jumeau numérique ?"
+      ,"field.formCountry": "Dans quel pays se situe la solution ?"
+      ,"field.formGeographicScope": "Quel territoire est concerné ?"
+      ,"field.formTerritoryClassification": "À quelle catégorie appartient ce territoire ?"
+      ,"field.formInEu": "Le territoire se situe-t-il dans l'Union européenne ?"
+      ,"field.formProviders": "Quels prestataires ou membres du consortium participent au projet ?"
+      ,"field.formTechnologies": "Quelles technologies ou caractéristiques sont utilisées ?"
+      ,"field.formUserTypes": "Quels types d'utilisateurs sont concernés ?"
+      ,"field.formUseCaseDomains": "Quels sont les domaines d'usage ?"
+      ,"field.formFundingSources": "Quelles sont les sources de financement ?"
     },
     en: {
       "brand.tagline": "Climate & regions: the future",
@@ -472,7 +475,7 @@
       "form.error": "<strong>Unable to save.</strong> Check the fields and make sure the Excel file is not open in another application.",
       "form.rateLimited": "<strong>Too many submissions.</strong> Wait a few minutes before trying again.",
       "form.required": "Required field",
-      "form.requiredHelp": "* Solution name is required. The timestamp is added automatically.",
+      "form.requiredHelp": "* The solution name is required. The number and “Observatory form” source are added automatically.",
       "form.choose": "Select…",
       "form.yes": "Yes",
       "form.no": "No",
@@ -483,14 +486,14 @@
       "form.selectedOne": "{count} selected choice",
       "form.selectedMany": "{count} selected choices",
       "form.filterChoices": "Filter choices…",
-      "form.section.identity": "Identification",
-      "form.section.identityHelp": "Main information used to identify the project and its progress.",
-      "form.section.capability": "Digital twin capability",
-      "form.section.capabilityHelp": "Declared level and optional justification, as defined in the source questionnaire.",
-      "form.section.territory": "Local authorities and territory",
-      "form.section.territoryHelp": "Beneficiary authorities, relevant territory and local scope.",
-      "form.section.consortium": "Consortium",
-      "form.section.consortiumHelp": "Indicate whether the project involves a consortium and select its members.",
+      "form.section.project": "1. The project",
+      "form.section.projectHelp": "Start by identifying the solution, its progress and the type of twin.",
+      "form.section.territory": "2. Territory",
+      "form.section.territoryHelp": "Then locate the solution and specify the territorial scale.",
+      "form.section.ecosystem": "3. Technical ecosystem and stakeholders",
+      "form.section.ecosystemHelp": "Indicate the organisations, technologies and audiences involved.",
+      "form.section.uses": "4. Uses and funding",
+      "form.section.usesHelp": "Finish with the use domains and funding sources.",
       "detail.kicker": "Solution record",
       "detail.unnamed": "Unnamed solution",
       "detail.noLocation": "Location not provided",
@@ -535,13 +538,16 @@
       ,"field.dataSource": "Data source"
       ,"field.formSolutionName": "What is the name of your solution?"
       ,"field.formDevelopmentStage": "What is your platform's development stage?"
-      ,"field.formCapability": "What is the capability of your digital twin?"
-      ,"field.formCapabilityJustification": "Please justify this capability if you can"
-      ,"field.formLocalAuthorities": "For which local authority or authorities was your solution created?"
-      ,"field.formTerritoryName": "For which city, community, local authority or region?"
-      ,"field.formLocalPerimeter": "What is the local scope of your digital twin?"
-      ,"field.formConsortium": "Are you part of a consortium?"
-      ,"field.formConsortiumMembers": "Consortium members"
+      ,"field.formTwinType": "What type of digital twin is it?"
+      ,"field.formCountry": "In which country is the solution located?"
+      ,"field.formGeographicScope": "Which territory is concerned?"
+      ,"field.formTerritoryClassification": "Which category does this territory belong to?"
+      ,"field.formInEu": "Is the territory located in the European Union?"
+      ,"field.formProviders": "Which providers or consortium members are involved?"
+      ,"field.formTechnologies": "Which technologies or characteristics are used?"
+      ,"field.formUserTypes": "Which types of users are concerned?"
+      ,"field.formUseCaseDomains": "What are the use domains?"
+      ,"field.formFundingSources": "What are the funding sources?"
     }
   };
 
