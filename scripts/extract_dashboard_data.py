@@ -22,7 +22,7 @@ from zipfile import ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = Path(os.environ.get(
-    "OBSERVATORY_SOURCE_FILE", ROOT / "benchmark_from_mapping_pdf.xlsx"
+    "OBSERVATORY_SOURCE_FILE", "/data/source/benchmark_from_mapping_pdf.xlsx"
 )).resolve()
 OUTPUT = Path(os.environ.get(
     "DASHBOARD_DATA_FILE", ROOT / "app" / "data" / "dashboard-data.js"

@@ -1,18 +1,16 @@
 # Diagnostic de qualité des données
 
-Ce dossier contient le classeur source [`benchmark_from_mapping_pdf.xlsx`](./benchmark_from_mapping_pdf.xlsx), qui rassemble des observations sur des plateformes et projets de jumeaux numériques locaux.
+La source utilisée en production est `data/source/benchmark_from_mapping_pdf.xlsx` sur la VM. Elle rassemble des observations sur des plateformes et projets de jumeaux numériques locaux.
 
 Ce document décrit l'état actuel des données avant leur utilisation dans un dashboard. Les nombres ci-dessous proviennent d'une lecture du classeur au 24 août 2026. Aucun nettoyage n'a encore été appliqué au fichier source.
 
-## Ouvrir le dashboard
+## Accéder au dashboard
 
-Double-cliquer sur [`ouvrir_dashboard.bat`](./ouvrir_dashboard.bat). Une fenêtre de commande lance le service local puis le dashboard s'ouvre automatiquement dans le navigateur. Cette fenêtre doit rester ouverte pendant l'utilisation ; sa fermeture arrête uniquement le service local.
+L'application est déployée uniquement avec Docker Compose sur la VM Debian. Elle est actuellement accessible à l'adresse `http://217.182.210.146:8088`.
 
-À chaque lancement, le classeur source est relu et `app/data/dashboard-data.js` est régénéré avant l'ouverture du site. Les indicateurs, graphiques, constats synthétiques, scores de complétude et diagnostics d'import sont donc recalculés à partir de la version courante de l'Excel. Les nombres descriptifs non calculables ont été retirés de l'interface.
+À chaque démarrage du conteneur, le classeur monté depuis `data/source` est relu et `app/data/dashboard-data.js` est généré dans le conteneur. Les indicateurs, graphiques, constats synthétiques, scores de complétude et diagnostics d'import sont donc recalculés depuis la source présente sur la VM.
 
-L'ouverture directe de [`app/index.html`](./app/index.html) reste possible pour consulter les données, mais l'enregistrement du formulaire Excel est alors désactivé par sécurité par le navigateur.
-
-L'application est autonome : elle ne nécessite ni bibliothèque supplémentaire, ni connexion internet. Le petit serveur local nécessaire au formulaire est inclus dans le projet et toutes les données restent sur l'ordinateur. Par défaut, elle présente les 197 solutions nommées. Le filtre correspondant peut être désactivé pour consulter les 199 observations analytiques.
+L'application n'a pas de mode de lancement local : l'ouverture directe de `app/index.html` et l'exécution directe du serveur Python ne sont pas prises en charge. Par défaut, l'interface présente les 197 solutions nommées. Le filtre correspondant peut être désactivé pour consulter les 199 observations analytiques.
 
 L'interface est disponible en français et en anglais grâce au sélecteur `FR / EN` placé dans l'en-tête. Le choix est mémorisé dans le navigateur. Seuls les libellés de l'interface, les explications et les catégories consolidées sont traduits : les noms, descriptions et autres valeurs provenant du classeur restent strictement identiques à la source. Une version peut aussi être ouverte directement avec `?lang=fr` ou `?lang=en` dans l'adresse.
 
@@ -52,11 +50,11 @@ Le guide court pour l'exploitation courante est disponible dans [`README_MAINTEN
 | `app/js/submission-form.js` | Questions, affichage et envoi du formulaire |
 | `app/js/record-interactions.js` | Fiche détaillée, groupes de points et zoom de la carte |
 | `app/js/app.js` | Démarrage, état courant, navigation, filtres et événements |
-| `app/data/dashboard-data.js` | Export local généré depuis le classeur |
+| `app/data/dashboard-data.js` | Export généré dans le conteneur au démarrage |
 | `app/data/world-countries.js` | Fond de carte mondial embarqué |
 | `scripts/extract_dashboard_data.py` | Extraction reproductible des données XLSX |
 | `scripts/build_world_map.py` | Préparation reproductible du fond de carte |
-| `scripts/serve_dashboard.py` | Serveur local et ajout incrémental des contributions dans Excel |
+| `scripts/serve_dashboard.py` | Serveur Docker et ajout incrémental des contributions dans Excel |
 
 ### Guide de maintenance du code
 
@@ -79,13 +77,14 @@ Pour une modification courante :
 
 Chaque fichier commence par un commentaire indiquant sa responsabilité. Les données générées dans `app/data` ne doivent pas être corrigées manuellement : toute correction durable doit être faite dans le classeur source ou dans le script d'extraction, puis régénérée.
 
-L'actualisation est automatique avec `ouvrir_dashboard.bat`. Pour régénérer uniquement les données sans lancer le site :
+L'actualisation est automatique au démarrage du conteneur. Après une modification de la source sur la VM :
 
-```powershell
-python scripts\extract_dashboard_data.py
+```bash
+docker compose restart observatoire
+docker compose logs --tail=50 observatoire
 ```
 
-Le script n'utilise que la bibliothèque standard Python et ne modifie jamais le fichier Excel source.
+Le script d'extraction n'utilise que la bibliothèque standard Python et ne modifie jamais le fichier Excel source.
 
 Le fond de carte des pays provient de **Natural Earth, Admin 0 – Countries, échelle 1:110m**. Il est embarqué localement afin que la carte reste disponible sans connexion internet. Natural Earth représente par défaut les frontières de fait ; cette couche est utilisée uniquement comme fond de repérage et ne modifie aucune donnée du classeur.
 

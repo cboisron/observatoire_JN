@@ -1,4 +1,6 @@
-# Déploiement Docker sur Debian
+# Déploiement Docker sur la VM Debian
+
+L'application ne possède pas de mode local. Le serveur et la génération des données doivent être lancés avec `docker compose` sur la VM.
 
 ## 1. Trouver un port libre
 
@@ -53,6 +55,7 @@ Si un fichier de contributions a été créé avec l'ancienne version à 11 colo
 ## 4. Remplacer les données sources
 
 ```bash
+sh scripts/backup_vm.sh
 cp /chemin/nouveau_fichier.xlsx data/source/benchmark_from_mapping_pdf.xlsx.tmp
 mv data/source/benchmark_from_mapping_pdf.xlsx.tmp data/source/benchmark_from_mapping_pdf.xlsx
 docker compose restart observatoire
@@ -70,6 +73,22 @@ data/contributions/saisies_jumeaux_numeriques.xlsx
 ```
 
 Il n'est jamais inclus dans l'image Docker ni accessible depuis le site.
+
+## 6. Automatiser les sauvegardes
+
+Tester d'abord la création d'une archive :
+
+```bash
+sh scripts/backup_vm.sh
+```
+
+Puis ajouter avec `crontab -e` :
+
+```cron
+15 2 * * * cd /home/debian/observatoire_JN && /bin/sh scripts/backup_vm.sh >> data/backups/backup.log 2>&1
+```
+
+Les archives de la source et des contributions sont conservées 30 jours dans `data/backups`. Les journaux du conteneur sont limités à trois fichiers de 10 Mo par `compose.yaml`.
 
 ## Protection du formulaire
 

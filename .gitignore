@@ -7,6 +7,9 @@ data/source/*
 data/contributions/*
 !data/contributions/.gitkeep
 
+data/backups/*
+!data/backups/.gitkeep
+
 __pycache__/
 *.pyc
 ~$*

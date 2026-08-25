@@ -1,8 +1,7 @@
-"""Serveur local du dashboard et enregistrement incrémental des saisies.
+"""Serveur Docker du dashboard déployé sur la VM.
 
-Le serveur n'écoute que sur 127.0.0.1. Il sert les fichiers statiques de ``app``
-et ajoute les formulaires validés à ``saisies_jumeaux_numeriques.xlsx`` sans
-modifier le classeur source de l'observatoire.
+Il sert les fichiers statiques de ``app`` et ajoute les formulaires validés au
+classeur de contributions monté depuis la VM, sans modifier la source.
 """
 
 from __future__ import annotations
@@ -14,7 +13,6 @@ import subprocess
 import sys
 import threading
 import uuid
-import webbrowser
 from collections import defaultdict, deque
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -29,10 +27,10 @@ from zipfile import ZIP_DEFLATED, BadZipFile, ZipFile
 ROOT = Path(__file__).resolve().parents[1]
 APP_DIR = ROOT / "app"
 OUTPUT = Path(os.environ.get(
-    "CONTRIBUTIONS_FILE", ROOT / "saisies_jumeaux_numeriques.xlsx"
+    "CONTRIBUTIONS_FILE", "/data/contributions/saisies_jumeaux_numeriques.xlsx"
 )).resolve()
-HOST = os.environ.get("DASHBOARD_HOST", "127.0.0.1")
-PORT = int(os.environ.get("DASHBOARD_PORT", "8765"))
+HOST = "0.0.0.0"
+PORT = 8765
 MAX_BODY_SIZE = 250_000
 RATE_LIMIT_REQUESTS = max(1, int(os.environ.get("RATE_LIMIT_REQUESTS", "5")))
 RATE_LIMIT_WINDOW_SECONDS = max(1, int(os.environ.get("RATE_LIMIT_WINDOW_SECONDS", "600")))
@@ -291,6 +289,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
 
 
 def main() -> None:
+    if os.environ.get("OBSERVATORY_CONTAINER_MODE") != "1":
+        raise SystemExit("Cette application doit être lancée avec Docker Compose sur la VM.")
     print("Actualisation des données depuis le classeur source…")
     subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "extract_dashboard_data.py")],
@@ -301,8 +301,6 @@ def main() -> None:
     address = f"http://{HOST}:{PORT}/"
     print(f"Dashboard disponible sur {address}")
     print(f"Les nouvelles saisies seront enregistrées dans : {OUTPUT}")
-    if "--no-browser" not in sys.argv:
-        threading.Timer(0.6, lambda: webbrowser.open(address)).start()
     try:
         server.serve_forever()
     except KeyboardInterrupt:

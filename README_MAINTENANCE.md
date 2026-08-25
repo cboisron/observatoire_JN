@@ -1,71 +1,62 @@
 # Maintenance technique sur la VM
 
-L'application publique fonctionne dans Docker sur la VM Debian `217.182.210.146`. Toutes les commandes ci-dessous sont à exécuter depuis le dépôt :
+L'application fonctionne uniquement avec Docker Compose sur la VM Debian `217.182.210.146`. Exécuter les commandes depuis la racine du dépôt :
 
 ```bash
-cd /home/debian/observatoire_JN/data/contributions
+cd /home/debian/observatoire_JN
 ```
 
-## Vérifier l'application
+## Vérifier ou mettre à jour
 
 ```bash
 docker compose ps
-docker compose logs --tail=50 observatoire
 curl http://127.0.0.1:8088/api/health
+docker compose logs --tail=50 observatoire
 ```
 
-L'adresse publique actuelle est `http://217.182.210.146:8088`. Si `APP_PORT` change dans `.env`, adapter l'URL et le pare-feu.
-
-## Mettre à jour le code
+Pour déployer une nouvelle version :
 
 ```bash
 git pull
 docker compose up -d --build
 ```
 
-Le conteneur redémarre automatiquement après un redémarrage de la VM. Pour un redémarrage manuel :
+Les logs Docker sont limités automatiquement à trois fichiers de 10 Mo.
+
+## Sauvegarder les données
+
+Créer immédiatement une archive :
 
 ```bash
-docker compose restart observatoire
+sh scripts/backup_vm.sh
 ```
 
-## Remplacer les données sources
+Les archives sont placées dans `data/backups` et supprimées après 30 jours. Pour automatiser la sauvegarde chaque nuit, ouvrir `crontab -e` et ajouter :
 
-Déposer le nouveau classeur sur la VM, puis le remplacer sans changer son nom :
+```cron
+15 2 * * * cd /home/debian/observatoire_JN && /bin/sh scripts/backup_vm.sh >> data/backups/backup.log 2>&1
+```
+
+## Remplacer la source Excel
 
 ```bash
+sh scripts/backup_vm.sh
 cp /chemin/nouveau_fichier.xlsx data/source/benchmark_from_mapping_pdf.xlsx.tmp
 mv data/source/benchmark_from_mapping_pdf.xlsx.tmp data/source/benchmark_from_mapping_pdf.xlsx
 docker compose restart observatoire
 docker compose logs --tail=50 observatoire
 ```
 
-Au démarrage, tous les indicateurs sont recalculés depuis ce fichier. Ne pas renommer la feuille `Observatoire` ni ses colonnes.
+Le dashboard est entièrement recalculé au redémarrage. Ne pas renommer la feuille `Observatoire` ni ses colonnes.
 
-## Récupérer et traiter les contributions
+## Récupérer les contributions
 
-Les réponses sont conservées sur la VM, hors de l'image Docker :
-
-```text
-data/contributions/saisies_jumeaux_numeriques.xlsx
-```
-
-Depuis un autre poste, le fichier peut être récupéré par SSH :
+Le fichier persistant est `data/contributions/saisies_jumeaux_numeriques.xlsx`. Depuis un autre poste :
 
 ```bash
-scp debian@217.182.210.146:~/observatoire_JN/data/contributions/saisies_jumeaux_numeriques.xlsx .
+scp debian@217.182.210.146:/home/debian/observatoire_JN/data/contributions/saisies_jumeaux_numeriques.xlsx .
 ```
 
-Après validation métier, reporter ses 14 colonnes dans les colonnes de même nom du classeur source, puis remplacer la source et redémarrer le conteneur. Le formulaire renseigne automatiquement `#` et `where_data_from`.
+Après validation métier, reporter ses 14 colonnes dans les colonnes de même nom de la source, puis appliquer la procédure de remplacement ci-dessus.
 
-## Sauvegarde minimale
-
-Sauvegarder régulièrement ces éléments avant un remplacement :
-
-```text
-.env
-data/source/benchmark_from_mapping_pdf.xlsx
-data/contributions/saisies_jumeaux_numeriques.xlsx
-```
-
-Ne pas modifier `app/data/dashboard-data.js` : il est généré automatiquement au démarrage. Le guide de première installation reste disponible dans `DEPLOIEMENT_DOCKER.md`.
+Ne jamais modifier `app/data/dashboard-data.js` : ce fichier est généré dans le conteneur et n'est pas conservé dans Git.
